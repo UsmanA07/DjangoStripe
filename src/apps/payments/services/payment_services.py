@@ -22,7 +22,7 @@ class PaymentService:
             line_items=[{
                 "price_data": {
                     "currency": "usd",
-                    "unit_amount": item_dto.price,
+                    "unit_amount": int(item_dto.price),
                     "product_data": {
                         "name": item_dto.name,
                         "description": item_dto.description,

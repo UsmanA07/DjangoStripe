@@ -7,7 +7,6 @@ class Item(models.Model):
         verbose_name='Название'
     )
     description = models.TextField(
-        blank=True,
         verbose_name='Описание'
     )
     price = models.PositiveIntegerField(
