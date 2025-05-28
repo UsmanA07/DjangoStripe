@@ -3,36 +3,65 @@
 <head>
     <title>{{ item.name }}</title>
     <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            padding: 2rem;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            margin-bottom: 0.5rem;
+        }
+        .price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        button {
+            padding: 0.75rem 2rem;
+            background-color: #6772e5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
     <h1>{{ item.name }}</h1>
     <p>{{ item.description }}</p>
-    <p>Price: ${{ item.price }}</p>
+    <p class="price">Price: ${{ item.price_display }}</p>
 
     <button id="buy-button">Buy</button>
 
     <script>
         const stripe = Stripe("{{ stripe_public_key }}");
-        console.log("{{ stripe_public_key }}")
+        const button = document.getElementById("buy-button");
 
-        document.getElementById("buy-button").addEventListener("click", () => {
+        button.addEventListener("click", () => {
+            button.disabled = true;
+            button.textContent = "Redirecting...";
+
             fetch("/api/v1/buy/{{ item.pk }}/")
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
-                console.log("11111111111111111")
-                console.log(data.session_id)
                     if (data.session_id) {
                         stripe.redirectToCheckout({ sessionId: data.session_id });
                     } else {
-                        alert("Ошибка при создании платежа.");
+                        throw new Error("Session ID missing");
                     }
                 })
                 .catch(error => {
-                    console.error("Fetch error:", error);
-                    alert("Ошибка сети, попробуйте позже.");
+                    alert("Произошла ошибка при создании платежа. Попробуйте позже.");
+                    console.error("Error:", error);
+                    button.disabled = false;
+                    button.textContent = "Buy";
                 });
         });
     </script>

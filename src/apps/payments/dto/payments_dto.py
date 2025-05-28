@@ -11,3 +11,7 @@ class ItemDTO:
     @classmethod
     def from_model(cls, item):
         return cls(item.pk, item.name, item.description, item.price)
+
+    @property
+    def price_display(self) -> str:
+        return f'{self.price / 100:.2f}'
