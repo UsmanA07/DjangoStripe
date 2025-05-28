@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Order #{{ order.id }}</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .item {
+            margin-bottom: 10px;
+        }
+
+        .total {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        button {
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #6772e5;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #5469d4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Order #{{ order.id }}</h1>
+
+    <div id="item-list">
+        {% for item in order.items %}
+            <div class="item">
+                <strong>{{ item.name }}</strong> — ${{ item.price|floatformat:2 }}
+                <br>
+                <small>{{ item.description }}</small>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="total">
+        Total: ${{ order.total }}
+    </div>
+
+    <button id="pay-button">Pay Now</button>
+
+    <script>
+        const stripe = Stripe("{{ stripe_public_key }}");
+
+        document.getElementById("pay-button").addEventListener("click", () => {
+            fetch("/api/v1/order/buy/{{ order.id }}/")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.session_id) {
+                        stripe.redirectToCheckout({ sessionId: data.session_id });
+                    } else {
+                        alert("Ошибка при создании Stripe-сессии");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Ошибка при оплате.");
+                });
+        });
+    </script>
+</body>
+</html>

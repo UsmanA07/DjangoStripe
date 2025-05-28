@@ -23,3 +23,11 @@ class Item(models.Model):
 
     def get_price_display(self):
         return f'{self.price // 100}'
+
+
+class Order(models.Model):
+    items = models.ManyToManyField(Item)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.items.name}'

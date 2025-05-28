@@ -15,3 +15,16 @@ class ItemDTO:
     @property
     def price_display(self) -> str:
         return f'{self.price / 100:.2f}'
+
+
+@dataclass
+class OrderDTO:
+    id: int
+    items: list[ItemDTO]
+    total: int
+
+    @classmethod
+    def from_model(cls, order):
+        items = [ItemDTO.from_model(item) for item in order.items.all()]
+        total = sum(item.price for item in items) / 100
+        return cls(id=order.id, items=items, total=total)
