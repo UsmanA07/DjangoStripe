@@ -1,5 +1,28 @@
 # Django Stripe Payments
 
+
+import sys
+from math import gcd
+
+def val2(n):
+    count = 0
+    while n % 2 == 0:
+        n //= 2
+        count += 1
+    return count
+
+m = int(input())
+p = int(input())
+
+if val2(m) != val2(p):
+    print(-1)
+else:
+    g = gcd(m, p)
+    lcm = m // g * p
+    print(lcm)
+
+
+
 ## Возможности
 
 - Отображение деталей товара (название, описание, цена)
