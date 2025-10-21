@@ -1,6 +1,6 @@
 # Django Stripe Payments
 
-
+'''
 import sys
 from math import gcd
 
@@ -20,7 +20,7 @@ else:
     g = gcd(m, p)
     lcm = m // g * p
     print(lcm)
-
+'''
 
 
 ## Возможности
